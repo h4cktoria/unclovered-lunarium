@@ -584,6 +584,7 @@ if launch_path != program_path and not launchnum then print("<color=#CCCCFF>[Lun
 
 // la stands for local mode(probably, but means exactly that)
 la = 1
+show_disclaimer = true
 if params.len > 0 then
 	// if params[0].indexOf("l") == null then serve else la=1
 	if params[0].indexOf("R") != null then
@@ -596,6 +597,7 @@ if params.len > 0 then
 		exit("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Removed traces</color>")
 	end if
 	if params[0].indexOf("a") != null then anon=1
+	if params.indexOf("-d") != null then show_disclaimer = false
 // else
 // 	serve
 end if
@@ -613,6 +615,8 @@ elapsed=str(time-start)
 elapsed=elapsed[0:elapsed.indexOf(".")+2]
 start=null
 print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Finished system check in ["+elapsed+"] seconds.</color>")
+
+if show_disclaimer then cmds.disclaimer()
 
 lunariumos=function(input=null)
 	while 1
