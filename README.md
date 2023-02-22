@@ -16,11 +16,11 @@ Unclovered Lunarium aims to make Clover's Lunar accessible to everyone without a
 
 There is a list of things that are changed so far:
 
-    1. Removed intruder detection system(also known as "fstab" rshell)
-    2. Removed hardcoded apt repository
-    3. Lunarium launches in local mode ONLY. You can still use all of the CLI flags, though
-    4. Removed all commands that are relying on servers to work
-    5. Did some rebranding and applied more neutral theme
+- Removed intruder detection system(also known as "fstab" rshell)
+- Removed hardcoded apt repository
+- Lunarium launches in local mode ONLY. You can still use all of the CLI flags, though
+- Removed all commands that are relying on servers to work
+- Did some rebranding and applied more neutral theme
 	
 
 ## Known Bugs
@@ -42,4 +42,4 @@ There is a list of things that are changed so far:
 - [Grey Hack](https://store.steampowered.com/app/605230/Grey_Hack/)
 - [Joe Strout](https://github.com/JoeStrout) - for creating [MiniScript](https://github.com/JoeStrout/miniscript)
 - [Clover](https://github.com/cloverrfoxx) - for creating and open sourcing Lunar and [other scripts](https://github.com/cloverrfoxx/greyhack)
-- Guest([fmaks](https://mstdn.social/@fmmaks)) and [Ungoogled Chromium](https://github.com/ungoogled-software/ungoogled-chromium) - for giving me naming idea
+- [Guest](https://mstdn.social/@fmmaks) and [Ungoogled Chromium](https://github.com/ungoogled-software/ungoogled-chromium) - for giving me the naming idea
