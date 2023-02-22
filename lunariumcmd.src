@@ -965,36 +965,36 @@ cmds.ssh=function(sin)
     return out
 end function
 
-cmds.vpn=function(sin)
-    out={}
-    out.bool=2
-    if shelltype != "shell" then return error("Shell required")
-    if sin.len < 2 or sin.len > 4 then return error("Invalid parameters")
-    acc=sin[0]
-    pass=sin[1]
-    serv=rhost
-    port=22
-    if sin.len >= 3 then serv=sin[2]
-    if sin.len == 4 then
-        port=sin[3].to_int
-        if typeof(port) != "number" then return error("Invalid port")
-    end if
-    print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Establishing connection...</color>")
-    ssh=server.shell.connect_service(serv,port,acc,pass,"ssh")
-    if typeof(ssh) == "shell" then
-        globals.sessions[session].shells.push(globals.sessions[session].shell)
-        globals.shell=ssh
-        globals.origShell=0
-        globals.xuser=acc
-        if acc == "root" then globals.xpath="/root" else globals.xpath="/home/"+acc
-        if not shell.host_computer.File(xpath) then globals.xpath="/"
-        globals.sessions[session].shell={"shell": shell, "path": xpath, "user": xuser, "orig": origShell}
-    else
-        out.bool=0
-        out.err="Could not establish connection"
-    end if
-    return out
-end function
+// cmds.vpn=function(sin)
+//     out={}
+//     out.bool=2
+//     if shelltype != "shell" then return error("Shell required")
+//     if sin.len < 2 or sin.len > 4 then return error("Invalid parameters")
+//     acc=sin[0]
+//     pass=sin[1]
+//     serv=rhost
+//     port=22
+//     if sin.len >= 3 then serv=sin[2]
+//     if sin.len == 4 then
+//         port=sin[3].to_int
+//         if typeof(port) != "number" then return error("Invalid port")
+//     end if
+//     print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Establishing connection...</color>")
+//     ssh=server.shell.connect_service(serv,port,acc,pass,"ssh")
+//     if typeof(ssh) == "shell" then
+//         globals.sessions[session].shells.push(globals.sessions[session].shell)
+//         globals.shell=ssh
+//         globals.origShell=0
+//         globals.xuser=acc
+//         if acc == "root" then globals.xpath="/root" else globals.xpath="/home/"+acc
+//         if not shell.host_computer.File(xpath) then globals.xpath="/"
+//         globals.sessions[session].shell={"shell": shell, "path": xpath, "user": xuser, "orig": origShell}
+//     else
+//         out.bool=0
+//         out.err="Could not establish connection"
+//     end if
+//     return out
+// end function
 
 cmds.shell=function(sin)
     out={}
