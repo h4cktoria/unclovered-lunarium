@@ -585,9 +585,10 @@ if launch_path != program_path and not launchnum then print("<color=#CCCCFF>[Lun
 // la stands for local mode(probably, but means exactly that)
 la = 1
 show_disclaimer = true
+initial_command = null
 if params.len > 0 then
 	// if params[0].indexOf("l") == null then serve else la=1
-	if params[0].indexOf("R") != null then
+	if params.indexOf("-R") != null then
 		comp.File(Lunarium).delete
 		comp.File(mxf).delete
 		comp.File(cpf).delete
@@ -596,7 +597,7 @@ if params.len > 0 then
 		cmds.corrupt(0)
 		exit("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Removed traces</color>")
 	end if
-	if params[0].indexOf("a") != null then anon=1
+	if params.indexOf("-a") != null then anon=1
 	if params.indexOf("-d") != null then show_disclaimer = false
 // else
 // 	serve
@@ -616,9 +617,9 @@ elapsed=elapsed[0:elapsed.indexOf(".")+2]
 start=null
 print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Finished system check in ["+elapsed+"] seconds.</color>")
 
-if show_disclaimer then cmds.disclaimer()
+if show_disclaimer then print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>This software is licensed under GPL v3. Type 'disclaimer' for more details.</color>")
 
-lunariumos=function(input=null)
+LunariumOS=function(input=null)
 	while 1
 		globals.shelltype=typeof(shell)
 		if shelltype == "shell" then
@@ -770,5 +771,4 @@ lunariumos=function(input=null)
 	end while
 end function
 
-if params[1:].len then lunariumos(params[1:])
-lunariumos()
+LunariumOS()

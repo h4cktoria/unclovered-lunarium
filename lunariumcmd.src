@@ -2959,7 +2959,7 @@ cmds.disclaimer = function(sin)
 	output = {}
 	output.bool = 2
 	
-	license_message = "DISCLAIMER: This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions; For more details please visit https://github.com/h4cktoria/unclovered-lunarium"
+	license_message = "This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions; For more details please visit https://github.com/h4cktoria/unclovered-lunarium"
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>" + license_message + "</color>")
 
 	return output
