@@ -10,7 +10,7 @@ helplist={}
 helplist.defaults="-=Defaults=-"
 
 helplist.help={"params": "[command]", "usage": "List all commands, or list command usage!"}
-helplist.fs={"params": "[FoxScriptCode]", "usage": "Invoke the FoxScript code terminal"}
+// helplist.fs={"params": "[FoxScriptCode]", "usage": "Invoke the FoxScript code terminal"}
 helplist.exit={"params": "N/A", "usage": "Go back a shell, or exit Lunarium"}
 helplist.clear={"params": "N/A", "usage": "Clears the screen"}
 helplist["while"]={"params": "[quantity][command][args]", "usage": "Repeat a command"}
@@ -97,6 +97,9 @@ helplist.use={"params": "[exp]", "usage": "Use an exploit from the results list"
 // helplist.rss={"params": "N/A", "usage": "Remote reverse shell server connector"}
 helplist.rsi={"params": "N/A", "usage": "Reverse shell interface"}
 helplist.sniffer={"params": "[-y]", "usage": "Sniffs connections"}
+helplist.net = {"params": "N/A", "usage": "Shows networks around you"}
+helplist.iwctl = {"params": "[bssid][essid][password]", "usage": "Connects you to a wifi"}
+helplist.lan = {"params": "[ip][gateway]", "usage": "Connects you to ethernet"}
 helplist.inet={"params": "[bssid][essid]", "usage": "Hacks wifi connections"}
 helplist.dictssh={"params": "[ip][port][user]", "usage": "Bruteforces an SSH connection"}
 helplist.brutessh={"params": "[ip][port][user]", "usage": "Bruteforces an SSH connecting using Base 62 counting"}
@@ -2948,14 +2951,7 @@ cmds["return"]=function(sin)
 	exit
 end function
 
-// useless command
-// cmds.exploits=function(sin)
-// 	out={}
-// 	out.bool=2
-// 	return out
-// end function
-
-cmds.disclaimer = function(sin)
+cmds.disclaimer = function(shell_input)
 	output = {}
 	output.bool = 2
 	
