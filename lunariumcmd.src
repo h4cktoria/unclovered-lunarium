@@ -953,7 +953,6 @@ cmds.ssh=function(sin)
     port=22
     if sin.len >= 3 then serv=sin[2]
     if sin.len == 4 then
-		print(sin)
         port=sin[3].to_int
         if typeof(port) != "number" then return error("Invalid port")
     end if
