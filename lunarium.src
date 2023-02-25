@@ -667,7 +667,7 @@ LunariumOS=function(input=null)
 		globals.pipe=[]
 		prompt=[]
 		next=[]
-		if input then prompt=input else prompt=user_input(display).split(" ")
+		if input then prompt=input else prompt=user_input(display).trim().split(" ")
 		if prompt[0] == "|" then continue
 		if prompt.indexOf("|") >= 0 then
 			prompt.push("|")

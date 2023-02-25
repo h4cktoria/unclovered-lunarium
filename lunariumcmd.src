@@ -119,10 +119,10 @@ helplist.fdos={"params": "[quantity][name]", "usage": "Storage Denial Of Service
 helplist.cdos={"params": "[quantity]", "usage": "CPU Denial Of Service attack"}
 
 //virus controls
-// helplist.virus="-=Viruses=-"
+helplist.virus="-=Viruses=-"
 
 // helplist.infect={"params": "N/A", "usage": "Infects /bin/ssh, /bin/passwd, and /bin/ps"}
-// helplist.rshell={"params": "[ip][process][port]", "usage": "Creates a reverse shell connection"}
+helplist.rshell={"params": "[ip][process][port]", "usage": "Creates a reverse shell connection"}
 // helplist.ransom={"params": "N/A", "usage": "Encrypt a system and demand payment for decryption"}
 // helplist.inject={"params": "[file]", "usage": "Inject reverse shell code into a source code file"}
 // helplist.aptjack={"params": "N/A", "usage": "Jack the apt stream and infect every file!"}
@@ -953,6 +953,7 @@ cmds.ssh=function(sin)
     port=22
     if sin.len >= 3 then serv=sin[2]
     if sin.len == 4 then
+		print(sin)
         port=sin[3].to_int
         if typeof(port) != "number" then return error("Invalid port")
     end if
@@ -1186,12 +1187,12 @@ cmds.nmap=function(sin)
 		ports=m.ports
 		ip=m.ip
 		info=info+"\n"+num+" "+ip+" /"
-		if ip == router.local_ip then info=info+"\n  |0 routed router "+rver
+		if ip == router.local_ip then info=info+"\n - - |0 routed router "+rver
 		for port in ports
 			service=router.port_info(port)
 			status="routed"
 			if port.is_closed then status="closed"
-			info=info+"\n  |"+port.port_number+" "+status+" "+service
+			info=info+"\n - - |"+port.port_number+" "+status+" "+service
 		end for
 		num=num+1
 	end for
@@ -1220,7 +1221,7 @@ cmds.target=function(sin)
     out.bool=2
     globals.args=null
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
-    if sin.len > 2 then return error("Invalid parameters")
+    if sin.len == 0 or sin.len > 2 then return error("Invalid parameters")
     globals.expport=sin[0].to_int
     if typeof(expport) != "number" then return error("Invalid port")
     if sin.len == 2 then globals.args=sin[1]
@@ -1422,26 +1423,21 @@ cmds.use=function(sin)
 	return out
 end function
 
-// cmds.rshell=function(sin)
-//     out={}
-//     out.bool=2
-//     if not origShell then return error("Cannot run an rshell on a remote connection")
-//     if (not server.shell and sin.len < 2) or sin.len > 3 then return error("Invalid parameters")
-//     rsport=1222
-// 	if server.shell then
-// 		rip=conf.rss.ip
-// 		rsport=conf.rss.rport
-// 		uproc=conf.proc
-// 	end if
-//     if sin.len >=1 then rip=sin[0]
-//     if sin.len >=2 then uproc=sin[1]
-//     if sin.len == 3 then
-//         rsport=sin[2].to_int
-//         if typeof(rsport) != "number" then return error("Invalid port")
-//     end if
-//     mx.rshell_client(rip,rsport,uproc)
-//     return out
-// end function
+cmds.rshell=function(sin)
+    out={}
+    out.bool=2
+    if not origShell then return error("Cannot run an rshell on a remote connection")
+    if sin.len() != 3 then return error("Invalid parameters")
+    rsport=1222
+    if sin.len >= 1 then rip=sin[0]
+    if sin.len >= 2 then uproc=sin[1]
+    if sin.len == 3 then
+        rsport=sin[2].to_int
+        if typeof(rsport) != "number" then return error("Invalid port")
+    end if
+    mx.rshell_client(rip, rsport, uproc)
+    return out
+end function
 
 // cmds.rss=function(sin)
 //     out={}
@@ -2567,11 +2563,112 @@ cmds.apt=function(sin)
 	if sin.len == 0 or sin.len > 2 then return error("Invalid parameters")
 	if not comp.File("/etc/apt") then
 		comp.create_folder("/etc","apt")
-		apt.update
+		apt.update()
 	end if
 	if not comp.File("/etc/apt/sources.txt") then
-		apt.update
+		apt.update()
 	end if
+
+	aptclient = apt
+
+	PendingUpdating = function(folderPath)
+		pendingUpdate = []
+		targetFolder = get_shell.host_computer.File(folderPath)
+		if targetFolder != null then
+			files = targetFolder.get_files
+			for itemFile in files
+				output = aptclient.check_upgrade(itemFile.path)
+				if output == true then
+					pendingUpdate.push(itemFile.name)
+				end if
+			end for
+		end if
+		return pendingUpdate
+	end function
+
+	apt_error = function()
+		return error("Invalid parameters\n<color=#CCCCFF>apt</color> " + helplist.apt.params)
+	end function
+	
+	action = sin[0]
+	if action == "update" then
+		print("Updating package lists...")
+		output = aptclient.update
+		if output then print(output)
+	else if action == "install" then
+		if sin.len != 2 then return apt_error
+		print("Reading package lists...")
+		print("Downloading " + sin[1])
+		output = aptclient.install(sin[1])
+		if output == true then return error(sin[1] + " installed")
+		print(output)
+	else if action == "search" then
+		if sin.len != 2 then return apt_error
+		print(aptclient.search(sin[1]))
+	else if action == "show" then
+		if sin.len != 2 then return apt_error
+		print(aptclient.show(sin[1]))
+	else if action == "add" then
+		if sin.len < 2 or sin.len > 3 then return apt_error
+		port = 1542
+		if sin.len == 3 then port = sin[2]
+		output = aptclient.add_repo(sin[1])
+		if output then return error(output)
+		print("Repository " + sin[1] + " added succesfully.\n")
+		aptclient.update()
+	else if action == "del" then
+		   if sin.len != 2 then return apt_error
+		output = aptclient.del_repo(sin[1])
+		if output then return error(output)
+		print("Repository " + sin[1] + " removed succesfully.\n")
+		aptclient.update()
+	else if action == "upgrade" then
+		print("Reading package lists...")
+		//upgrade all packages
+		if sin.len == 1 then
+			pendingPackages = PendingUpdating("/lib") + PendingUpdating("/bin")
+			if pendingPackages.len == 0 then return error("No updates needed")
+			print("The following packages will be updated:")
+			pkgs = ""
+			for itemPackage in pendingPackages
+				pkgs = pkgs + " " + itemPackage
+			end for
+			print(pkgs)
+			option = user_input("\nDo you want to continue?(y/n): ")
+			if option == "y" or option == "yes" then
+				counter = 0
+				for itemPackage in pendingPackages
+					output = aptclient.install(itemPackage)
+					if output == true then
+						counter = counter + 1
+					else if output then
+						print(output)
+					end if
+				end for
+				print(counter + " packages updated")
+			else 
+				return error("Aborted")
+			end if
+		//upgrade specific package
+		else if sin.len == 2 then
+			output = aptclient.check_upgrade(sin[1])
+			if not output then return error("No updates needed")
+			if output == true then
+				print("The following package will be updated:\nparams[1]")
+				option = user_input("\nDo you want to continue?(y/n): ")
+				if option == "y" or option == "yes" then
+					output = aptclient.install(sin[1])
+					if output == true then return error(sin[1] + " installed.")
+					print(output)				
+				else 
+					return error("Aborted")
+				end if
+			else 
+				print(output)
+			end if
+		end if
+	end if
+
 	return out
 end function
 
