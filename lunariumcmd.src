@@ -80,6 +80,7 @@ helplist.network="-=Network=-"
 
 helplist.ssh={"params": "[user][password][ip][port]", "usage": "Connect to a server"}
 helplist.nmap={"params": "N/A", "usage": "Maps out the selected RHost"}
+helplist.smtp = {"params": "[port]", "usage": "Shows all registered users via smtp"}
 helplist.shell={"params": "[-y/-s]", "usage": "Starts a terminal on the connected system"}
 helplist.shells={"params": "N/A", "usage": "Open a different shell!"}
 helplist.apt={"params": "[update/upgrade/search/show/add/del/install][args]", "usage": "apt-get service"}
@@ -3053,6 +3054,29 @@ cmds.disclaimer = function(shell_input)
 	
 	license_message = "This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions; For more details please visit https://github.com/h4cktoria/unclovered-lunarium"
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>" + license_message + "</color>")
+
+	return output
+end function
+
+cmds.smtp = function(shell_input)
+	output = {}
+	output.bool = 2
+
+	if not cpf then return error("Missing Crypto library")
+	crypto = include_lib(cpf)
+	if shell_input.len() != 1 then return error("Invalid parameters")
+	ip_address = globals.rhost
+	smtp_port = shell_input[0].val()
+	if smtp_port == 0 then return error("Invalid parameters")
+	users = crypto.smtp_user_list(ip_address, smtp_port)
+	if not users then return error("Could not get user list from smtp")
+	if users isa string then return error(users)
+
+	print("Starting smtp-mail-list...\n\n###### Scan started ######")
+	for user in users
+		print(user)
+	end for
+	print("###### Scan completed ######\n" + users.len + " results.")
 
 	return output
 end function
