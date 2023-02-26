@@ -9,7 +9,8 @@ Important note: this is __NOT A REAL HACKING TOOLKIT__! This has been made, work
 
 ## Objectives
 
-Unclovered Lunarium aims to make Clover's Lunar accessible to everyone without any potential or actual risks for the user
+Unclovered Lunarium aims to make Clover's Lunar accessible to everyone without any potential or actual risks for the user 
+and tries to bring better user experience with less bugs occuring and more commands available
 
 
 ## What has changed comparing to original Lunar?
@@ -21,11 +22,13 @@ There is a list of things that are changed so far:
 - Lunarium launches in local mode ONLY. You can still use all of the CLI flags, though
 - Removed all commands that are relying on servers to work
 - Did some rebranding and applied more neutral theme
+- Fixed some of original Lunar's bugs
+- Added some useful commands to it
 	
 
 ## Known Bugs
 
-- escalate command does escalating on user's libraries even if user is connected to the remote host
+- Network commands are crashing the entire shell if you use Lunarium without internet access
 - You tell me
 
 
