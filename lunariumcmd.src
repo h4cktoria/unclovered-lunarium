@@ -134,6 +134,7 @@ helplist.security="-=Security=-"
 helplist.fyrwall={"params": "N/A", "usage": "SOLSTICE Fyrwall Security Analysis System"}
 helplist.secure={"params": "[-s/-h]", "usage": "Secures your server or home computer"}
 helplist.corrupt={"params": "N/A", "usage": "Corrupts /var/system.log, covers disconnect tracks"}
+helplist.libcheck = {"params": "[path]", "usage": "Shows you the information about library"}
 
 //clipboard control
 helplist.clipboard="-=Clipboard=-"
@@ -3062,7 +3063,6 @@ cmds.smtp = function(shell_input)
 	output = {}
 	output.bool = 2
 
-	if not cpf then return error("Missing Crypto library")
 	crypto = include_lib(cpf)
 	if shell_input.len() != 1 then return error("Invalid parameters")
 	ip_address = globals.rhost
@@ -3072,11 +3072,42 @@ cmds.smtp = function(shell_input)
 	if not users then return error("Could not get user list from smtp")
 	if users isa string then return error(users)
 
-	print("Starting smtp-mail-list...\n\n###### Scan started ######")
+	print("<color=#E6E6FA>Starting smtp-mail-list...\n\n###### Scan started ######</color>")
 	for user in users
 		print(user)
 	end for
-	print("###### Scan completed ######\n" + users.len + " results.")
+	print("<color=#E6E6FA>###### Scan completed ######\n" + users.len + " results</color>")
+
+	return output
+end function
+
+cmds.libcheck = function(shell_input)
+	output = {}
+	output.bool = 2
+
+	if not origShell then return error("Can't check library on a remote connection")
+	if shell_input.len() != 1 then return error("Invalid parameters")
+	metaxploit = include_lib(mxf)
+
+	lib_file = shell.host_computer().File(shell_input[0])
+	if not lib_file then
+		if xpath == "/" then
+			lib_file = shell.host_computer().File(xpath + shell_input[0])
+		else
+			lib_file = shell.host_computer().File(xpath + "/" + shell_input[0])
+		end if
+	end if
+	if not lib_file then return error("No such file found")
+	
+	if shelltype == "shell" then
+		metalib = metaxploit.load(lib_file.path())
+		if not metalib then return error("Could not load library")
+		print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Library '" + lib_file.name() + "'</color>")
+		print("<color=#CCCCFF>Name: </color><color=#E6E6FA>" + metalib.lib_name() + "</color>")
+		print("<color=#CCCCFF>Version: </color><color=#E6E6FA>" + metalib.version() + "</color>")
+	else
+		return error("Shell required")
+	end if
 
 	return output
 end function
