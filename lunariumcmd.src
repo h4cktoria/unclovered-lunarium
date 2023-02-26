@@ -1292,6 +1292,10 @@ cmds.escalate=function(sin)
     out={}
     out.bool=2
     globals.args=null
+
+	// as escalate does not works on a remote connection - why allowing user to use it on it?
+	if not origShell then return error("Can't use escalate on a remote connection")
+
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
     if sin.len > 1 then return error("Invalid parameters")
     if sin.len == 1 then globals.args=sin[0]
