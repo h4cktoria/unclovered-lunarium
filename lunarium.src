@@ -721,16 +721,16 @@ LunariumOS=function(input=null)
 				if el == "" then prompt[i]=0
 				i=i+1
 			end for
-			if prompt[0] == "r" then prompt[0] = "rhost"
-			if prompt[0] == "f" then prompt[0] = "nmap"
-			if prompt[0] == "w" then prompt[0] = "target"
-			if prompt[0] == "a" then prompt[0] = "escalate"
-			if prompt[0] == "d" then prompt[0] = "use"
-			if prompt[0] == "rnd" then prompt[0] = "random"
-			if prompt[0] == "enc" then prompt[0] = "shade"
-			if prompt[0] == "up" then prompt[0] = "put"
-			if prompt[0] == "dl" then prompt[0] = "get"
-			if prompt[0] == "clr" or prompt[0] == "cls" then prompt[0]="clear"
+			// if prompt[0] == "r" then prompt[0] = "rhost"
+			// if prompt[0] == "f" then prompt[0] = "nmap"
+			// if prompt[0] == "w" then prompt[0] = "target"
+			// if prompt[0] == "a" then prompt[0] = "escalate"
+			// if prompt[0] == "d" then prompt[0] = "use"
+			// if prompt[0] == "rnd" then prompt[0] = "random"
+			// if prompt[0] == "enc" then prompt[0] = "shade"
+			// if prompt[0] == "up" then prompt[0] = "put"
+			// if prompt[0] == "dl" then prompt[0] = "get"
+			// if prompt[0] == "clr" or prompt[0] == "cls" then prompt[0]="clear"
 			if prompt[0] == "!!" then prompt=previous
 			previous=prompt
 			args=prompt[1:]
