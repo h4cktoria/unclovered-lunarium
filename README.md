@@ -22,14 +22,13 @@ There is a list of things that are changed so far:
 - Lunarium launches in local mode ONLY. You can still use all of the CLI flags, though
 - Removed all commands that are relying on servers to work
 - Did some rebranding and applied more neutral theme
-- Fixed some of original Lunar's bugs
-- Added some useful commands to it
+- Fixed some of the original Lunar's bugs
+- Added some useful commands
 	
 
 ## Known Bugs
 
-- Network commands are crashing the entire shell if you use Lunarium without internet access
-- You tell me
+- None so far, so You tell me!
 
 
 ## Installation Guide
