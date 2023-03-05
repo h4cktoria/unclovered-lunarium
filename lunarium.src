@@ -463,67 +463,67 @@ saveScan=function()
 				end if
 			end if
 		end if
-		// if dbfile.get_content.len == 0 then dbfile.set_content(compression(n,"compress")) else dbfile.set_content(compression(compression(dbfile.get_content,"decompress")+n,"compress"))
+		if dbfile.get_content.len == 0 then dbfile.set_content(compression(n,"compress")) else dbfile.set_content(compression(compression(dbfile.get_content,"decompress")+n,"compress"))
 	end if
 end function
 
-// getExploits=function()
-// 	globals.exploits=[]
-// 	if server.shell then
-// 		e=""
-// 		globals.dbfile=servdb.get_files[-1]
-// 		for file in servdb.get_files
-// 			if file.get_content.len > 1 then e=e+compression(file.get_content,"decompress")
-// 		end for
-// 		for line in e.split("/")
-// 			if line == "" then continue
-// 			newLib={}
-// 			newLib.name=line.split("#")[0]
-// 			newLib.ver=line.split("#")[1].split(char(10))[0]
-// 			newLib.vulns=[]
-// 			vulns=line.split(":")
-// 			vulns.pull
-// 			for l in vulns
-// 				l=l.split("\n")
-// 				if l[0] == "" then continue
-// 				ex={"mem": 0, "vulns": []}
-// 				ex.mem=l.pull
-// 				for vuln in l
-// 					if vuln == "" then continue
-// 					ex.vulns.push(vuln)
-// 				end for
-// 				newLib.vulns.push(ex)
-// 			end for
-// 			exploits.push(newLib)
-// 		end for
-// 		return
-// 	end if
-// 	if dbfile.get_content.len == 0 then return
-//     for line in compression(dbfile.get_content,"decompress").split("/")
-// 		if line == "" then continue
-// 		newLib={}
-// 		newLib.name=line.split("#")[0]
-// 		newLib.ver=line.split("#")[1].split("\n")[0]
-// 		newLib.vulns=[]
-// 		for l in line.split(":")[1:]
-// 			l=l.split("\n")
-// 			if l[0] == "" then continue
-// 			ex={"mem": 0, "vulns": []}
-// 			ex.mem=l.pull
-// 			for vuln in l
-// 				if vuln == "" then continue
-// 				ex.vulns.push(vuln)
-// 			end for
-// 			newLib.vulns.push(ex)
-// 		end for
-// 		exploits.push(newLib)
-// 	end for
-// 	return
-// end function
-
-getExploits = function()
-	globals.exploits = []
+getExploits=function()
+	globals.exploits=[]
+	if server.shell then
+		e=""
+		globals.dbfile=servdb.get_files[-1]
+		for file in servdb.get_files
+			if file.get_content.len > 1 then e=e+compression(file.get_content,"decompress")
+		end for
+		for line in e.split("/")
+			if line == "" then continue
+			newLib={}
+			newLib.name=line.split("#")[0]
+			newLib.ver=line.split("#")[1].split(char(10))[0]
+			newLib.vulns=[]
+			vulns=line.split(":")
+			vulns.pull
+			for l in vulns
+				l=l.split("\n")
+				if l[0] == "" then continue
+				ex={"mem": 0, "vulns": []}
+				ex.mem=l.pull
+				for vuln in l
+					if vuln == "" then continue
+					ex.vulns.push(vuln)
+				end for
+				newLib.vulns.push(ex)
+			end for
+			exploits.push(newLib)
+		end for
+		return
+	end if
+	if dbfile.get_content.len == 0 then return
+    for line in compression(dbfile.get_content,"decompress").split("/")
+		if line == "" then continue
+		newLib={}
+		newLib.name=line.split("#")[0]
+		newLib.ver=line.split("#")[1].split("\n")[0]
+		newLib.vulns=[]
+		for l in line.split(":")[1:]
+			l=l.split("\n")
+			if l[0] == "" then continue
+			ex={"mem": 0, "vulns": []}
+			ex.mem=l.pull
+			for vuln in l
+				if vuln == "" then continue
+				ex.vulns.push(vuln)
+			end for
+			newLib.vulns.push(ex)
+		end for
+		exploits.push(newLib)
+	end for
+	return
 end function
+
+// getExploits = function()
+// 	globals.exploits = []
+// end function
 
 getPath=function(path)
 	path=path.split("/")

@@ -329,163 +329,168 @@ FoxLib.General.ParseInt=function(s,orad=0,irad=0)
     return out.join("")
 end function
 
-FoxLib.General.Compression=function(st=null,type=null)
-    basedictcompress={}
-    basedictdecompress={}
+// The compression has to go...
+// FoxLib.General.Compression=function(st=null,type=null)
+//     basedictcompress={}
+//     basedictdecompress={}
 
-    for i in range(0,55295)
-        ic=char(i)
-        iic=char(i)+char(0)
-        basedictcompress[ic]=iic
-        basedictdecompress[iic]=ic
-    end for
+//     for i in range(0,55295)
+//         ic=char(i)
+//         iic=char(i)+char(0)
+//         basedictcompress[ic]=iic
+//         basedictdecompress[iic]=ic
+//     end for
 
-    dictAddA=function(str,dict,a,b)
-        if a >= 55296 then
-            a = 0
-            b=b+1
-            if b >= 55296 then
-                dict={}
-                b=1
-            end if
-        end if
-        dict[str]=char(a)+char(b)
-        a=a+1
-        return [dict,a,b]
-    end function
+//     dictAddA=function(str,dict,a,b)
+//         if a >= 55296 then
+//             a = 0
+//             b=b+1
+//             if b >= 55296 then
+//                 dict={}
+//                 b=1
+//             end if
+//         end if
+//         dict[str]=char(a)+char(b)
+//         a=a+1
+//         return [dict,a,b]
+//     end function
 
-    compress=function(input)
-        if not input isa string then return 0
-        length=input.len
-        if length <= 1 then return "u"+input
+//     compress=function(input)
+//         if not input isa string then return 0
+//         length=input.len
+//         if length <= 1 then return "u"+input
 
-        dict={}
-        a=0
-        b=1
+//         dict={}
+//         a=0
+//         b=1
 
-        result=["c"]
-        resultLen=result.len
+//         result=["c"]
+//         resultLen=result.len
 
-        word=""
+//         word=""
 
-        for i in range(0,length-1)
-            c=input[i]
-            wc=word+c
-            if not (basedictcompress.hasIndex(wc) or dict.hasIndex(wc)) then
-                write=null
-                if basedictcompress.hasIndex(word) then
-                    write=basedictcompress[word]
-                else if dict.hasIndex(word) then
-                    write=dict[word]
-                end if
-                if not write then return 0
-                result.push(write)
-                resultLen=result.len
-                if length <= resultLen then return "u"+input
-                dict=dictAddA(wc,dict,a,b)
-                a=dict[1]
-                b=dict[2]
-                dict=dict[0]
-                word=c
-            else
-                word=wc
-            end if
-        end for
-        if basedictcompress.hasIndex(word) then result.push(basedictcompress[word]) else result.push(dict[word])
-        resultLen=result.len
-        if length <= resultLen then return "u"+input
-        return result.join("")
-    end function
+//         for i in range(0,length-1)
+//             c=input[i]
+//             wc=word+c
+//             if not (basedictcompress.hasIndex(wc) or dict.hasIndex(wc)) then
+//                 write=null
+//                 if basedictcompress.hasIndex(word) then
+//                     write=basedictcompress[word]
+//                 else if dict.hasIndex(word) then
+//                     write=dict[word]
+//                 end if
+//                 if not write then return 0
+//                 result.push(write)
+//                 resultLen=result.len
+//                 if length <= resultLen then return "u"+input
+//                 dict=dictAddA(wc,dict,a,b)
+//                 a=dict[1]
+//                 b=dict[2]
+//                 dict=dict[0]
+//                 word=c
+//             else
+//                 word=wc
+//             end if
+//         end for
+//         if basedictcompress.hasIndex(word) then result.push(basedictcompress[word]) else result.push(dict[word])
+//         resultLen=result.len
+//         if length <= resultLen then return "u"+input
+//         return result.join("")
+//     end function
 
-    dictAddB=function(str,dict,a,b)
-        if a >= 55296 then
-            a=0
-            b=b+1
-            if b >= 55296 then
-                dict={}
-                b=1
-            end if
-        end if
-        dict[char(a)+char(b)]=str
-        a=a+1
-        return [dict,a,b]
-    end function
+//     dictAddB=function(str,dict,a,b)
+//         if a >= 55296 then
+//             a=0
+//             b=b+1
+//             if b >= 55296 then
+//                 dict={}
+//                 b=1
+//             end if
+//         end if
+//         dict[char(a)+char(b)]=str
+//         a=a+1
+//         return [dict,a,b]
+//     end function
 
-    decompress=function(input)
-        if not input isa string then return 0
+//     decompress=function(input)
+//         if not input isa string then return 0
 
-        if input.len < 1 then return 0
+//         if input.len < 1 then return 0
 
-        control=input[0]
-        if control == "u" then
-            return input[1:]
-        else if control != "c" then
-            return 0
-        end if
-        input=input[1:]
-        length=input.len
+//         control=input[0]
+//         if control == "u" then
+//             return input[1:]
+//         else if control != "c" then
+//             return 0
+//         end if
+//         input=input[1:]
+//         length=input.len
 
-        if length < 2 then return 0
+//         if length < 2 then return 0
 
-        dict={}
-        a=0
-        b=1
+//         dict={}
+//         a=0
+//         b=1
 
-        result=[]
-        last=input[0:2]
+//         result=[]
+//         last=input[0:2]
 
-        if basedictdecompress.hasIndex(last) then
-            result.push(basedictdecompress[last])
-        else if dict.hasIndex(last) then
-            result.push(dict[last])
-        end if
+//         if basedictdecompress.hasIndex(last) then
+//             result.push(basedictdecompress[last])
+//         else if dict.hasIndex(last) then
+//             result.push(dict[last])
+//         end if
 
-        for i in range(2,length-1,2)
-            code=input[i:i+2]
-            lastStr=null
-            if basedictdecompress.hasIndex(last) then
-                lastStr=basedictdecompress[last]
-            else if dict.hasIndex(last) then
-                lastStr=dict[last]
-            end if
-            if lastStr == null then return 0
+//         for i in range(2,length-1,2)
+//             code=input[i:i+2]
+//             lastStr=null
+//             if basedictdecompress.hasIndex(last) then
+//                 lastStr=basedictdecompress[last]
+//             else if dict.hasIndex(last) then
+//                 lastStr=dict[last]
+//             end if
+//             if lastStr == null then return 0
 
-            if basedictdecompress.hasIndex(code) then
-                toAdd=basedictdecompress[code]
-            else if dict.hasIndex(code) then
-                toAdd=dict[code]
-            else
-                toAdd=0
-            end if
+//             if basedictdecompress.hasIndex(code) then
+//                 toAdd=basedictdecompress[code]
+//             else if dict.hasIndex(code) then
+//                 toAdd=dict[code]
+//             else
+//                 toAdd=0
+//             end if
 
-            if toAdd then
-                result.push(toAdd)
-                dict=dictAddB(lastStr+toAdd[0],dict,a,b)
-                a=dict[1]
-                b=dict[2]
-                dict=dict[0]
-            else
-                tmp=lastStr+lastStr[0]
-                result.push(tmp)
-                dict=dictAddB(tmp,dict,a,b)
-                a=dict[1]
-                b=dict[2]
-                dict=dict[0]
-            end if
+//             if toAdd then
+//                 result.push(toAdd)
+//                 dict=dictAddB(lastStr+toAdd[0],dict,a,b)
+//                 a=dict[1]
+//                 b=dict[2]
+//                 dict=dict[0]
+//             else
+//                 tmp=lastStr+lastStr[0]
+//                 result.push(tmp)
+//                 dict=dictAddB(tmp,dict,a,b)
+//                 a=dict[1]
+//                 b=dict[2]
+//                 dict=dict[0]
+//             end if
 
-            last=code
-        end for
+//             last=code
+//         end for
 
-        return result.join("")
-    end function
+//         return result.join("")
+//     end function
 
-    if type == "compress" then
-        return compress(st)
-    else if type == "decompress" then
-        return decompress(st)
-    else
-        return 0
-    end if
+//     if type == "compress" then
+//         return compress(st)
+//     else if type == "decompress" then
+//         return decompress(st)
+//     else
+//         return 0
+//     end if
+// end function
+
+FoxLib.General.Compression=function(string_, type)
+    return string_
 end function
 
 //                      CRYPTOGRAPHY FUNCTIONS

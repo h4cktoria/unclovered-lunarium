@@ -3100,11 +3100,13 @@ cmds.smtp = function(shell_input)
 	if not users then return error("Could not get user list from smtp")
 	if users isa string then return error(users)
 
-	print("<color=#E6E6FA>Starting smtp-mail-list...\n\n###### Scan started ######</color>")
+	print "<color=#E6E6FA>Starting smtp-mail-list...</color>"
+	print ""
+	print "<color=#E6E6FA>###### Scan started ######</color>"
 	for user in users
-		print(user)
+		print "<color=#E6E6FA>" + user + "</color>"
 	end for
-	print("<color=#E6E6FA>###### Scan completed ######\n" + users.len + " results</color>")
+	print("<color=#E6E6FA>###### Scan completed with " + users.len + " results ######</color>")
 
 	return output
 end function
