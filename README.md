@@ -28,7 +28,8 @@ There is a list of things that are changed so far:
 
 ## Known Bugs
 
-- None so far, so You tell me!
+- Network-based commands on a File Shell crashes the entire program
+- You tell me!
 
 
 ## Installation Guide
