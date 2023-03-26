@@ -28,13 +28,12 @@ There is a list of things that are changed so far:
 
 ## Known Bugs
 
-- Network-based commands on a File Shell crashes the entire program
 - You tell me!
 
 
 ## Installation Guide
 
-- Download the sources and get them into the game
+- Download the sources from [here](https://github.com/h4cktoria/unclovered-lunarium/tree/main/src) and get them into the game
 - Move __foxlib.src__, __lunariumcmd.src__ and __lunarium.src__ into your __/root__ folder
 - Compile __lunarium.src__
 - Launch compiled binary. Type __help__ to see all available commands
