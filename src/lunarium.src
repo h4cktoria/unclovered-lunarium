@@ -617,7 +617,7 @@ elapsed=elapsed[0:elapsed.indexOf(".")+2]
 start=null
 print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Finished system check in ["+elapsed+"] seconds.</color>")
 
-if show_disclaimer then print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>This software is licensed under GPL v3. Type 'disclaimer' for more details.</color>")
+if show_disclaimer then print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>This software is licensed under GPL v3. Type 'about' for more details.</color>")
 
 LunariumOS=function(input=null)
 	while 1

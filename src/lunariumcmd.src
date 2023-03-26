@@ -358,10 +358,10 @@ cmds.readmail=function(sin)
     for email in mails
         id=email.split("MailID: ")[1].split("\n")[0]
         email=email.split("\n")[3:]
-        from=email[0].split("From: ")[1]
+        from_=email[0].split("From: ")[1]
         subject=email[1].split("Subject: ")[1]
         email=email[2:-1].join("\n")
-        print("<color=#CCCCFF>["+num+"]<br>[From] "+from+"<br>[Subj] "+subject+"<br>"+email+"</color>")
+        print("<color=#CCCCFF>["+num+"]<br>[From] "+from_+"<br>[Subj] "+subject+"<br>"+email+"</color>")
         num=num+1
         ids.push(id)
     end for
@@ -947,8 +947,8 @@ end function
 cmds.ssh=function(sin)
     out={}
     out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
     if shelltype != "shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
     if sin.len < 2 or sin.len > 4 then return error("Invalid parameters")
     acc=sin[0]
     pass=sin[1]
@@ -1010,8 +1010,8 @@ end function
 cmds.shell=function(sin)
     out={}
     out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
     if shelltype != "shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
     if sin.len > 1 then return error("Invalid parameters")
     if sin.len == 1 and comp.File(xpath) and comp.File(xpath).has_permission("w") then
 		get_shell.host_computer.File(Lunarium).chmod("o+rx")
@@ -1050,8 +1050,8 @@ end function
 cmds.put=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if shelltype != "shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if sin.len < 1 or sin.len > 2 then return error("Invalid parameters")
 	if not get_shell.host_computer.File(sin[0]) then return error("File does not exist")
 	if not get_shell.host_computer.File(sin[0]).has_permission("r") then return error("No permissions to file")
@@ -1065,8 +1065,8 @@ end function
 cmds.get=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if shelltype != "shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if sin.len < 1 or sin.len > 2 then return error("Invalid parameters")
 	path=getPath(sin[0])
 	if not comp.File(path) then return error("File does not exist")
@@ -1100,7 +1100,11 @@ end function
 cmds.rhost=function(sin)
     out={}
     out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
     if sin.len > 1 then return error("Invalid parameters")
     if sin.len == 0 then
         if shelltype == "file" then
@@ -1124,7 +1128,11 @@ end function
 cmds.random=function(sin)
     out={}
     out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
     ip=null
     while not get_router(ip)
         ip=getRandomIp
@@ -1138,7 +1146,11 @@ end function
 cmds.nmap=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
     if sin.len then
         if sin[0][:3] == "www" then sin[0]=nslookup(sin[0])
         locals.rhost=sin[0]
@@ -1194,13 +1206,13 @@ cmds.nmap=function(sin)
 	for m in ips
 		ports=m.ports
 		ip=m.ip
-		info=info+"\n"+num+" "+ip+" /"
-		if ip == router.local_ip then info=info+"\n - - |0 routed router "+rver
+		info=info+"\n"+num+" "+ip+" \"
+		if ip == router.local_ip then info=info+"\n - |0 routed router "+rver
 		for port in ports
 			service=router.port_info(port)
 			status="routed"
 			if port.is_closed then status="closed"
-			info=info+"\n - - |"+port.port_number+" "+status+" "+service
+			info=info+"\n - |"+port.port_number+" "+status+" "+service
 		end for
 		num=num+1
 	end for
@@ -1227,7 +1239,11 @@ end function
 cmds.target=function(sin)
     out={}
     out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
     globals.args=null
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
     if sin.len == 0 or sin.len > 2 then return error("Invalid parameters")
@@ -1299,8 +1315,13 @@ end function
 cmds.escalate=function(sin)
     out={}
     out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
     globals.args=null
+
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
 
 	// as escalate does not works on a remote connection - why allowing user to use it on it?
 	if not origShell then return error("Can't use escalate on a remote connection")
@@ -1384,6 +1405,11 @@ end function
 cmds.use=function(sin)
     out={}
     out.bool=2
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
     if not results.len then return error("No exploits found")
     if sin.len != 1 then return error("Invalid parameters")
     num=sin[0].to_int
@@ -1441,7 +1467,11 @@ cmds.rshell=function(sin)
     out={}
     out.bool=2
 	
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
     if not origShell then return error("Cannot run an rshell on a remote connection")
     if sin.len() != 3 then return error("Invalid parameters")
     rsport=1222
@@ -1522,7 +1552,11 @@ end function
 cmds.rsi=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
 	if not origShell then return error("Cannot receive rshell connections on a remote connection")
 	if not include_lib("/lib/librshell.so") then return error("No rshell server installed")
 	rsinfo="num pubip locip user\n"
@@ -1583,7 +1617,11 @@ end function
 cmds.sniffer=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
 	if not origShell then return error("Cannot sniff connections on a remote connection")
 	if sin.len > 1 then return error("Invalid parameters")
 	save=0
@@ -1913,8 +1951,8 @@ end function
 cmds.rootkit=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if shelltype != "shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if not comp.File(xpath).has_permission("w") then return error("No permissions to folder")
 	get_shell.host_computer.File(Lunarium).chmod("o+rx")
 	get_shell.host_computer.File(Lunarium).chmod("u+rx")
@@ -2579,7 +2617,11 @@ end function
 cmds.apt=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
 	if not origShell then return error("Cannot apt on a remote connection")
 	if not apt then return error("aptclient.so required")
 	if sin.len == 0 or sin.len > 2 then return error("Invalid parameters")
@@ -2741,8 +2783,8 @@ end function
 cmds.ping=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if shelltype != "shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if sin.len != 1 then return error("Invalid parameters")
 	start=time
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Pinging "+sin[0]+"</color>")
@@ -2795,7 +2837,11 @@ end function
 cmds.shells=function(sin)
     out={}
     out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
 	if not globals.sessions[session].shells.len then return out
     for i in range(0,globals.sessions[session].shells.len-1)
         print("\n<color=#CCCCFF>["+i+"]</color>")
@@ -2818,8 +2864,8 @@ end function
 cmds.dictssh=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if shelltype!="shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if sin.len > 3 then return error("Invalid parameters")
 	if server.shell then
 		passwds=server.shell.host_computer.File("/root/passwds")
@@ -2878,7 +2924,6 @@ end function
 cmds.dictsudo=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if not origShell then return error("Cannot change user on remote connection")
 	if sin.len > 1 then return error("Invalid parameters")
 	if server.shell then
@@ -2932,8 +2977,8 @@ end function
 cmds.brutessh=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if shelltype != "shell" then return error("Shell required")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if sin.len > 3 then return error("Invalid parameters")
 	ip=rhost
 	port=22
@@ -2999,7 +3044,6 @@ end function
 cmds.brutesudo=function(sin)
 	out={}
 	out.bool=2
-	if not comp.is_network_active() then return error("Internet connection required")
 	if not origShell then return error("Cannot change user on remote connection")
 	if sin.len > 1 then return error("Invalid parameters")
 	user="root"
@@ -3076,12 +3120,20 @@ cmds["return"]=function(sin)
 	exit
 end function
 
-cmds.disclaimer = function(shell_input)
+cmds.about = function(shell_input)
 	output = {}
 	output.bool = 2
 	
-	license_message = "This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions; For more details please visit https://github.com/h4cktoria/unclovered-lunarium"
-	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>" + license_message + "</color>")
+	print("<color=#CCCCFF>[Lunarium]</color>")
+	print("<color=#CCCCFF>Night Lunar made by </color><color=#E6E6FA>Clover (https://github.com/cloverrfoxx)</color>")
+	print("<color=#CCCCFF>Unclovered by </color><color=#E6E6FA>Hacktoria (https://github.com/h4cktoria)</color>")
+	
+	license_message = "
+This program comes with ABSOLUTELY NO WARRANTY;
+This is free software, and you are welcome to redistribute it under certain conditions;
+For more details please visit https://github.com/h4cktoria/unclovered-lunarium"
+	
+	print("<color=#E6E6FA>" + license_message + "</color>")
 
 	return output
 end function
@@ -3090,7 +3142,11 @@ cmds.smtp = function(shell_input)
 	output = {}
 	output.bool = 2
 
-	if not comp.is_network_active() then return error("Internet connection required")
+	if shelltype != "file" then
+		if not comp.is_network_active() then
+			return error("Internet connection required")
+		end if
+	end if
 	if shell_input.len() != 1 then return error("Invalid parameters")
 	crypto = include_lib(cpf)
 	ip_address = globals.rhost
@@ -3145,6 +3201,7 @@ end function
 
 // bindings
 cmds.cls = @cmds.clear
+cmds.dir = @cmds.ls
 
 cmds.up = @cmds.put
 cmds.upload = @cmds.up
