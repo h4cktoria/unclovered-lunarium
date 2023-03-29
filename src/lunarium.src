@@ -102,7 +102,16 @@ server.conf=null
 conf=null
 sessions.push({"shell": {"shell": shell, "user": xuser, "path": xpath, "orig": origShell}, "shells": [], "results": [], "clipboard": [], "rhost": rhost})
 
-error=function(reason)
+error=function(reason, command = null)
+	if command then
+    	if helplist.hasIndex(command) then
+			commandHelp = helplist[command]
+    		reason = reason + "\n\n<color=#CCCCFF>" + command + "</color>"
+    		reason = reason + "\n<color=#E6E6FA>" + commandHelp.params + "</color>"
+    		reason = reason + "\n<color=#E6E6FA>" + commandHelp.usage + "</color>"
+    	end if
+    end if
+
 	out={}
 	out.bool=0
 	out.err=reason

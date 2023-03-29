@@ -210,7 +210,7 @@ end function
 cmds.crack=function(sin)
     out={}
     out.bool=1
-    if sin.len != 1 then return error("Invalid parameters")
+    if sin.len != 1 then return error("Invalid parameters", "crack")
     if server.shell then out.out=decipher(server.cp,sin[0]) else out.out=decipher(cp,sin[0])
 	if not out.out then out.bool=3
     return out
@@ -374,7 +374,7 @@ end function
 cmds.ls=function(sin)
     out={}
     out.bool=2
-    if sin.len > 1 then return error("Invalid parameters")
+    if sin.len > 1 then return error("Invalid parameters", "ls")
     if sin.len == 1 then
         if shelltype == "file" then file=getFile(getPath(sin[0])) else file=comp.File(getPath(sin[0]))
     else
@@ -404,7 +404,7 @@ end function
 cmds.cd=function(sin)
     out={}
     out.bool=2
-    if sin.len > 1 then return error("Invalid parameters")
+    if sin.len > 1 then return error("Invalid parameters", "cd")
     if sin.len == 0 then
         if shelltype == "file" then
 			shell=getFile(home)
@@ -430,7 +430,7 @@ end function
 cmds.cat=function(sin)
     out={}
     out.bool=1
-    if sin.len != 1 then return error("Invalid parameters")
+    if sin.len != 1 then return error("Invalid parameters", "cat")
     path=getPath(sin[0])
     if shelltype == "file" then file=getFile(path) else file=comp.File(path)
     if not file then return error("File does not exist")
@@ -444,7 +444,7 @@ end function
 cmds.grep=function(sin)
     out={}
     out.bool=2
-    if sin.len != 2 then return error("Invalid parameters")
+    if sin.len != 2 then return error("Invalid parameters", "grep")
     sin[1]=sin[1].split("\n")
     num=0
     for l in sin[1]
@@ -465,7 +465,7 @@ end function
 cmds.echo=function(sin)
     out={}
     out.bool=1
-    if sin.len == 0 then return error ("Invalid parameters")
+    if sin.len == 0 then return error ("Invalid parameters", "echo")
     out.out=sin.join(" ")
     return out
 end function
@@ -474,7 +474,7 @@ cmds.mkdir=function(sin)
     out={}
     out.bool=2
     if shelltype == "file" then return error("Cannot create directories with a file shell")
-    if sin.len != 1 then return error("Invalid parameters")
+    if sin.len != 1 then return error("Invalid parameters", "mkdir")
     path=getPath(sin[0])
     name=path.split("/")[-1]
     if comp.File(path) then return error("File exists")
@@ -490,7 +490,7 @@ end function
 cmds.mv=function(sin)
     out={}
     out.bool=2
-    if sin.len != 2 then return error("Invalid parameters")
+    if sin.len != 2 then return error("Invalid parameters", "mv")
     origFile=getPath(sin[0])
     destFolder=getPath(sin[1])
     if shelltype == "file" then file=getFile(origFile) else file=comp.File(origFile)
@@ -528,7 +528,7 @@ end function
 cmds.cp=function(sin)
     out={}
     out.bool=2
-    if sin.len != 2 then return error("Invalid parameters")
+    if sin.len != 2 then return error("Invalid parameters", "cp")
     origFile=getPath(sin[0])
     destFolder=getPath(sin[1])
     if shelltype == "file" then file=getFile(origFile) else file=comp.File(origFile)
@@ -568,7 +568,7 @@ cmds.touch=function(sin)
     out={}
     out.bool=2
     if shelltype == "file" then return error("Cannot create files with a file shell")
-    if sin.len != 1 then return error("Invalid parameters")
+    if sin.len != 1 then return error("Invalid parameters", "touch")
     path=getPath(sin[0])
     name=path.split("/")[-1]
     if comp.File(path) then return error("File exists")
@@ -585,7 +585,7 @@ cmds.build=function(sin)
     out={}
     out.bool=2
     if shelltype != "shell" then return error("Shell required")
-    if sin.len > 2 or sin.len == 0 then return error("Invalid parameters")
+    if sin.len > 2 or sin.len == 0 then return error("Invalid parameters", "build")
     source=getPath(sin[0])
     dest=xpath
     if sin.hasIndex(1) then dest=getPath(sin[1])
@@ -608,7 +608,7 @@ cmds.shrink=function(sin)
 	out={}
 	out.bool=2
 	if shelltype != "shell" then return error("Shell required")
-	if sin.len != 2 then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "shrink")
 	maxSize=sin[1].to_int
 	if typeof(maxSize) != "number" then return error("Invalid size")
 	path=getPath(sin[0])
@@ -666,7 +666,7 @@ end function
 cmds.rm=function(sin)
 	out={}
 	out.bool=2
-	if sin.len != 1 then return error("Invalid parameters")
+	if sin.len != 1 then return error("Invalid parameters", "rm")
 	path=getPath(sin[0])
 	if shelltype == "file" then file=getFile(path) else file=comp.File(path)
 	if not file then return error("File does not exist")
@@ -682,7 +682,7 @@ end function
 cmds.chmod=function(sin)
 	out={}
 	out.bool=2
-	if sin.len < 2 or sin.len > 3 then return error("Invalid parameters")
+	if sin.len < 2 or sin.len > 3 then return error("Invalid parameters", "chmod")
 	perms=sin[1]
 	path=getPath(sin[0])
 	if sin.len != 3 then rec=0 else rec=1
@@ -694,7 +694,7 @@ cmds.chmod=function(sin)
 	else if perms.indexOf("-") != null then
 		perms=[perms[:perms.indexOf("-")],perms[perms.indexOf("-"):]]
 	else
-		return error("Invalid parameters")
+		return error("Invalid parameters", "chmod")
 	end if
 	if not perms[0] then perms[0]="oug"
 	for perm in perms[0]
@@ -707,7 +707,7 @@ end function
 cmds.chown=function(sin)
 	out={}
 	out.bool=2
-	if sin.len < 2 or sin.len > 3 then return error("Invalid parameters")
+	if sin.len < 2 or sin.len > 3 then return error("Invalid parameters", "chown")
 	owner=sin[1]
 	path=getPath(sin[0])
 	if sin.len != 3 then rec=0 else rec=1
@@ -722,7 +722,7 @@ end function
 cmds.chgrp=function(sin)
 	out={}
 	out.bool=2
-	if sin.len < 2 or sin.len > 3 then return error("Invalid parameters")
+	if sin.len < 2 or sin.len > 3 then return error("Invalid parameters", "chgrp")
 	group=sin[1]
 	path=getPath(sin[0])
 	if sin.len != 3 then rec=0 else rec=1
@@ -738,7 +738,7 @@ cmds.sudo=function(sin)
 	out={}
 	out.bool=2
 	if not origShell then return error("Cannot change user on a remote connection")
-	if sin.len != 2 then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "sudo")
 	sudosh=get_shell(sin[0],sin[1])
 	if not sudosh then return error("Invalid username or password")
 	globals.sessions[session].shells.push(sessions[sessions].shell)
@@ -755,7 +755,7 @@ cmds.passwd=function(sin)
     out={}
     out.bool=2
     if shelltype == "file" then return error("Cannot change password with file shell")
-    if sin.len != 2 then return error("Invalid parameters")
+    if sin.len != 2 then return error("Invalid parameters", "passwd")
     output=comp.change_password(sin[0],sin[1])
     if output==true then print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Password for "+sin[0]+" changed to "+sin[1]+"</color>")
     if typeof(output) == "string" then return error(output)
@@ -766,7 +766,7 @@ cmds.useradd=function(sin)
 	out={}
 	out.bool=2
     if shelltype == "file" then return error("Cannot add users with file shell")
-	if sin.len != 2 then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "useradd")
 	output=comp.create_user(sin[0],sin[1])
 	if output==true then print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>User "+sin[0]+" created</color>")
 	if typeof(output) == "string" then return error(output)
@@ -777,7 +777,7 @@ cmds.userdel=function(sin)
 	out={}
 	out.bool=2
     if shelltype == "file" then return error("Cannot delete users with file shell")
-	if sin.len != 1 then return error("Invalid parameters")
+	if sin.len != 1 then return error("Invalid parameters", "userdel")
 	output=comp.delete_user(sin[0],1)
 	if output==true then print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>User "+sin[0]+" deleted</color>")
 	if typeof(output) == "string" then return error(output)
@@ -788,7 +788,7 @@ cmds.groups=function(sin)
 	out={}
 	out.bool=2
     if shelltype == "file" then return error("Cannot view user groups with file shell")
-	if sin.len != 1 then return error("invalid parameters")
+	if sin.len != 1 then return error("invalid parameters", "groups")
 	output=comp.groups(sin[0])
 	if not output then return out
 	print(output)
@@ -799,7 +799,7 @@ cmds.groupadd=function(sin)
 	out={}
 	out.bool=2
     if shelltype == "file" then return error("Cannot add groups with file shell")
-	if sin.len != 2 then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "groupadd")
 	output=comp.create_group(sin[0],sin[1])
 	if output==true then
 		print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>"+sin[1]+" added to user "+sin[0]+"</color>")
@@ -812,7 +812,7 @@ cmds.groupdel=function(sin)
 	out={}
 	out.bool=0
     if shelltype == "file" then return error("Cannot delete groups with file shell")
-	if sin.len != 2 then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "groupdel")
 	output=comp.delete_group(sin[0],sin[1])
 	if output==true then
 		print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>"+sin[1]+" removed from user "+sin[0]+"</color>")
@@ -825,7 +825,7 @@ cmds.bash=function(sin)
 	out={}
 	out.bool=2
 	if shelltype != "shell" then return error("Shell required")
-	if sin.len == 0 then return error("Invalid parameters")
+	if sin.len == 0 then return error("Invalid parameters", "bash")
 	path=getPath(sin[0])
 	prog=path
 	if not comp.File(prog) then return error("File does not exist")
@@ -919,7 +919,7 @@ cmds.kill=function(sin)
 	out={}
 	out.bool=2
     if shelltype == "file" then return error("Cannot kill processes with file shell")
-	if sin.len != 1 then return error("Invalid parameters")
+	if sin.len != 1 then return error("Invalid parameters", "kill")
 	if sin[0] == "all" then
 		procs=comp.show_procs.split("\n")
 		procs.pull
@@ -949,7 +949,7 @@ cmds.ssh=function(sin)
     out.bool=2
     if shelltype != "shell" then return error("Shell required")
 	if not comp.is_network_active() then return error("Internet connection required")
-    if sin.len < 2 or sin.len > 4 then return error("Invalid parameters")
+    if sin.len < 2 or sin.len > 4 then return error("Invalid parameters", "ssh")
     acc=sin[0]
     pass=sin[1]
     serv=rhost
@@ -1012,7 +1012,7 @@ cmds.shell=function(sin)
     out.bool=2
     if shelltype != "shell" then return error("Shell required")
 	if not comp.is_network_active() then return error("Internet connection required")
-    if sin.len > 1 then return error("Invalid parameters")
+    if sin.len > 1 then return error("Invalid parameters", "shell")
     if sin.len == 1 and comp.File(xpath) and comp.File(xpath).has_permission("w") then
 		get_shell.host_computer.File(Lunarium).chmod("o+rx")
 		get_shell.host_computer.File(Lunarium).chmod("u+rx")
@@ -1052,7 +1052,7 @@ cmds.put=function(sin)
 	out.bool=2
 	if shelltype != "shell" then return error("Shell required")
 	if not comp.is_network_active() then return error("Internet connection required")
-	if sin.len < 1 or sin.len > 2 then return error("Invalid parameters")
+	if sin.len < 1 or sin.len > 2 then return error("Invalid parameters", "put")
 	if not get_shell.host_computer.File(sin[0]) then return error("File does not exist")
 	if not get_shell.host_computer.File(sin[0]).has_permission("r") then return error("No permissions to file")
 	if sin.len == 2 then path=getPath(sin[1]) else path=xpath
@@ -1067,7 +1067,7 @@ cmds.get=function(sin)
 	out.bool=2
 	if shelltype != "shell" then return error("Shell required")
 	if not comp.is_network_active() then return error("Internet connection required")
-	if sin.len < 1 or sin.len > 2 then return error("Invalid parameters")
+	if sin.len < 1 or sin.len > 2 then return error("Invalid parameters", "get")
 	path=getPath(sin[0])
 	if not comp.File(path) then return error("File does not exist")
 	if not comp.File(path).has_permission("r") then return error("No permissions to file")
@@ -1081,7 +1081,7 @@ end function
 cmds.set=function(sin)
     out={}
     out.bool=2
-    if sin.len != 2 then return error("Invalid parameters")
+    if sin.len != 2 then return error("Invalid parameters", "set")
 	var=sin[0]
 	set=sin[1]
 
@@ -1105,7 +1105,7 @@ cmds.rhost=function(sin)
 			return error("Internet connection required")
 		end if
 	end if
-    if sin.len > 1 then return error("Invalid parameters")
+    if sin.len > 1 then return error("Invalid parameters", "rhost")
     if sin.len == 0 then
         if shelltype == "file" then
             globals.rhost=globals.sessions[session].shell.pubip
@@ -1188,6 +1188,15 @@ cmds.nmap=function(sin)
 	print(extinfo)
 	if fwr then print(format_columns(fwinfo))
 	num=0
+	
+	// working around the bug when the program crashes
+	// if you use nmap under certain conditions
+	for port in ports
+		if typeof(port) != "port" then
+			ports.remove(port)
+		end if
+	end for
+
 	for port in ports
 		inMap=0
 		for m in ips
@@ -1246,7 +1255,7 @@ cmds.target=function(sin)
 	end if
     globals.args=null
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
-    if sin.len == 0 or sin.len > 2 then return error("Invalid parameters")
+    if sin.len == 0 or sin.len > 2 then return error("Invalid parameters", "target")
     globals.expport=sin[0].to_int
     if typeof(expport) != "number" then return error("Invalid port")
     if sin.len == 2 then globals.args=sin[1]
@@ -1327,7 +1336,7 @@ cmds.escalate=function(sin)
 	if not origShell then return error("Can't use escalate on a remote connection")
 
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
-    if sin.len > 1 then return error("Invalid parameters")
+    if sin.len > 1 then return error("Invalid parameters", "escalate")
     if sin.len == 1 then globals.args=sin[0]
     libs=comp.File("/lib")
 	if server.shell then
@@ -1411,7 +1420,7 @@ cmds.use=function(sin)
 		end if
 	end if
     if not results.len then return error("No exploits found")
-    if sin.len != 1 then return error("Invalid parameters")
+    if sin.len != 1 then return error("Invalid parameters", "use")
     num=sin[0].to_int
     if typeof(num) != "number" or num > results.len or num < 0 then return error("Invalid selection")
     ex=results[num]
@@ -1473,7 +1482,7 @@ cmds.rshell=function(sin)
 		end if
 	end if
     if not origShell then return error("Cannot run an rshell on a remote connection")
-    if sin.len() != 3 then return error("Invalid parameters")
+    if sin.len() != 3 then return error("Invalid parameters", "rshell")
     rsport=1222
     if sin.len >= 1 then rip=sin[0]
     if sin.len >= 2 then uproc=sin[1]
@@ -1623,7 +1632,7 @@ cmds.sniffer=function(sin)
 		end if
 	end if
 	if not origShell then return error("Cannot sniff connections on a remote connection")
-	if sin.len > 1 then return error("Invalid parameters")
+	if sin.len > 1 then return error("Invalid parameters", "sniffer")
 	save=0
 	if sin.len == 1 then save=1
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Waiting for network traffic. . .</color>")
@@ -1637,7 +1646,7 @@ cmds.iwctl=function(sin)
 	out={}
 	out.bool=2
 	if shelltype == "file" then return error("Cannot change WiFi on a Filetype shell")
-	if sin.len != 3 then return error("Invalid parameters")
+	if sin.len != 3 then return error("Invalid parameters", "iwctl")
 	if comp.active_net_card != "WIFI" then return error("Cannot use ethernet")
 	check=comp.connect_wifi("wlan0",sin[0],sin[1],sin[2])
 	if check != 1 then return error(check)
@@ -1657,7 +1666,7 @@ cmds.inet=function(sin)
 	out={}
 	out.bool=1
 	if not origShell then return error("Cannot hack wifi connections on a remote connection")
-	if sin.len > 2 then return error("Invalid parameters")
+	if sin.len > 2 then return error("Invalid parameters", "inet")
 	winfo="# BSSID POWER ESSID"
 	num=0
 	sel=null
@@ -1699,7 +1708,7 @@ end function
 cmds.mailbomb=function(sin)
 	out={}
 	out.bool=2
-	if sin.len != 4 then return error("Invalid parameters")
+	if sin.len != 4 then return error("Invalid parameters", "mailbomb")
 	if not server.shell then
         umaila=user_input("<color=#CCCCFF>[Email]$ </color><color=#E6E6FA>",anon)
         umaill=user_input("<color=#CCCCFF>[Pass]$ </color><color=#E6E6FA>",anon)
@@ -1771,7 +1780,7 @@ cmds.rdos=function(sin)
 	out={}
 	out.bool=2
 	if not origShell then return error("Cannot disable remote system")
-	if sin.len != 1 or typeof(sin[0].to_int) != "number" then return error("Invalid parameters")
+	if sin.len != 1 or typeof(sin[0].to_int) != "number" then return error("Invalid parameters", "rdos")
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Are you sure you want to continue?</color>")
 	confirm=user_input("<color=#CCCCFF>[y/N]$ </color><color=#E6E6FA>").lower
 	if confirm != "y" then return out
@@ -1787,7 +1796,7 @@ cmds.fdos=function(sin)
 	out.bool=2
 	if shelltype == "file" then return error("Cannot disable remote system with file shell")
 	if not comp.File(xpath).has_permission("w") then return error("No permissions to path")
-	if sin.len > 2 or sin.len == 0 or typeof(sin[0].to_int) != "number" then return error("Invalid parameters")
+	if sin.len > 2 or sin.len == 0 or typeof(sin[0].to_int) != "number" then return error("Invalid parameters", "fdos")
 	name="DOS"
 	if sin.len == 2 then name=sin[1]
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Are you sure you want to continue?</color>")
@@ -1804,7 +1813,7 @@ cmds.cdos=function(sin)
 	out={}
 	out.bool=2
 	if not origShell then return error("Cannot disable remote connection")
-	if sin.len != 1 or typeof(sin[0].to_int) != "number" then return error("Invalid parameters")
+	if sin.len != 1 or typeof(sin[0].to_int) != "number" then return error("Invalid parameters", "cdos")
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Are you sure you want to continue?</color>")
 	confirm=user_input("<color=#CCCCFF>[y/N]$ </color><color=#E6E6FA>").lower
 	if confirm != "y" then return out
@@ -1818,7 +1827,7 @@ end function
 cmds.vim=function(sin)
 	out={}
 	out.bool=2
-	if sin.len > 2 or sin.len < 1 then return error("Invalid parameters")
+	if sin.len > 2 or sin.len < 1 then return error("Invalid parameters", "vim")
 	if shelltype == "file" then file=getFile(getPath(sin[0])) else file=comp.File(getPath(sin[0]))
 	if not file then return error("File does not exist")
 	if file.is_binary then return error("Binary file, cannot edit")
@@ -2207,8 +2216,8 @@ end function
 cmds.encrypt=function(sin)
 	out={}
 	out.bool=1
-	if sin.len != 3 then return error("Invalid parameters")
-	if sin[2] != "enc" and sin[2] != "dec" then return error("Invalid parameters")
+	if sin.len != 3 then return error("Invalid parameters", "encrypt")
+	if sin[2] != "enc" and sin[2] != "dec" then return error("Invalid parameters", "encrypt")
 	out.out=encrypt(sin[0],sin[1],sin[2])
 	return out
 end function
@@ -2216,7 +2225,7 @@ end function
 cmds.md5=function(sin)
 	out={}
 	out.bool=1
-	if sin.len != 1 then return error("Invalid parameters")
+	if sin.len != 1 then return error("Invalid parameters", "md5")
 	out.out=md5(sin[0])
 	return out
 end function
@@ -2224,7 +2233,7 @@ end function
 cmds.S256=function(sin)
 	out={}
 	out.bool=1
-	if sin.len != 1 then return error("Invalid parameters")
+	if sin.len != 1 then return error("Invalid parameters", "S256")
 	out.out=Sha256(sin[0])
 	return out
 end function
@@ -2232,7 +2241,7 @@ end function
 cmds.rot=function(sin)
 	out={}
 	out.bool=1
-	if sin.len != 2 then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "rot")
 	if typeof(sin[0]).to_int != "number" then return error("Invalid number")
 	out.out=rot(sin[0].to_int,sin[1])
 	return out
@@ -2241,8 +2250,8 @@ end function
 cmds.vigenere=function(sin)
 	out={}
 	out.bool=1
-	if sin.len != 3 then return error("Invalid parameters")
-	if sin[2] != "enc" and sin[2] != "dec" then return error("Invalid parameters")
+	if sin.len != 3 then return error("Invalid parameters", "vigenere")
+	if sin[2] != "enc" and sin[2] != "dec" then return error("Invalid parameters", "vigenere")
 	out.out=vigenere(sin[0],sin[1],sin[2])
 	return out
 end function
@@ -2250,8 +2259,8 @@ end function
 cmds.base64=function(sin)
 	out={}
 	out.bool=1
-	if sin.len != 2 then return error("Invalid parameters")
-	if sin[1] != "enc" and sin[1] != "dec" then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "base64")
+	if sin[1] != "enc" and sin[1] != "dec" then return error("Invalid parameters", "base64")
 	out.out=base64(sin[0],sin[1])
 	return out
 end function
@@ -2259,21 +2268,21 @@ end function
 cmds.base=function(sin)
 	out={}
 	out.bool=1
-	if sin.len < 1 or sin.len > 3 then return error("Invalid parameters")
+	if sin.len < 1 or sin.len > 3 then return error("Invalid parameters", "base")
 	if sin.len == 1 then
 		out.out=parseint(sin[0])
 	else if sin.len == 2 then
 		sin[1]=sin[1].to_int
-		if not typeof(sin[1]) == "number" then return error("Invalid parameters")
-		if sin[1] < 2 or sin[1] > 62 then return error("Invalid parameters")
+		if not typeof(sin[1]) == "number" then return error("Invalid parameters", "base")
+		if sin[1] < 2 or sin[1] > 62 then return error("Invalid parameters", "base")
 		out.out=parseint(sin[0],sin[1])
 	else if sin.len == 3 then
 		sin[1]=sin[1].to_int
 		sin[2]=sin[2].to_int
-		if not typeof(sin[1]) == "number" then return error("Invalid parameters")
-		if not typeof(sin[2]) == "number" then return error("Invalid parameters")
-		if sin[1] < 2 or sin[1] > 62 then return error("Invalid parameters")
-		if sin[2] < 2 or sin[2] > 62 then return error("Invalid parameters")
+		if not typeof(sin[1]) == "number" then return error("Invalid parameters", "base")
+		if not typeof(sin[2]) == "number" then return error("Invalid parameters", "base")
+		if sin[1] < 2 or sin[1] > 62 then return error("Invalid parameters", "base")
+		if sin[2] < 2 or sin[2] > 62 then return error("Invalid parameters", "base")
 		out.out=parseint(sin[0],sin[1],sin[2])
 	end if
 	return out
@@ -2282,8 +2291,8 @@ end function
 cmds.compress=function(sin)
 	out={}
 	out.bool=1
-	if sin.len != 2 then return error("Invalid parameters")
-	if sin[0] != "enc" and sin[0] != "dec" then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "compress")
+	if sin[0] != "enc" and sin[0] != "dec" then return error("Invalid parameters", "compress")
 	if sin[0] == "enc" then sin[0] = "compress"
 	if sin[0] == "dec" then sin[0] = "decompress"
 	out.out=compression(sin[1],sin[0])
@@ -2359,7 +2368,7 @@ cmds.secure=function(sin)
 	out={}
 	out.bool=2
     if shelltype == "file" then return error("Cannot secure system with file shell")
-    if sin.len != 1 or (sin[0] != "-h" and sin[0] != "-s") then return error("Invalid parameters")
+    if sin.len != 1 or (sin[0] != "-h" and sin[0] != "-s") then return error("Invalid parameters", "secure")
     if xuser != "root" then return error("Root required")
     home=1
     if sin[0] == "-s" then home=0
@@ -2569,9 +2578,7 @@ cmds.copy=function(sin)
 	out={}
 	out.bool=2
 	if not sin.len then
-		out.bool=0
-		out.err="Invalid parameters"
-		return out
+		return error("Invalid parameters", "copy")
 	end if
 	if sin.len == 1 then
 		globals.clipboard=sin[0]
@@ -2598,7 +2605,7 @@ end function
 cmds["while"]=function(sin)
 	out={}
 	out.bool=2
-	if sin.len <= 1 then return error("Invalid parameters")
+	if sin.len <= 1 then return error("Invalid parameters", "while")
 	list=[]
 	sin[0]=sin[0].to_int
 	if typeof(sin[0]) != "number" then return error("Invalid length")
@@ -2624,7 +2631,7 @@ cmds.apt=function(sin)
 	end if
 	if not origShell then return error("Cannot apt on a remote connection")
 	if not apt then return error("aptclient.so required")
-	if sin.len == 0 or sin.len > 2 then return error("Invalid parameters")
+	if sin.len == 0 or sin.len > 2 then return error("Invalid parameters", "apt")
 	if not comp.File("/etc/apt") then
 		comp.create_folder("/etc","apt")
 		apt.update()
@@ -2785,7 +2792,7 @@ cmds.ping=function(sin)
 	out.bool=2
 	if shelltype != "shell" then return error("Shell required")
 	if not comp.is_network_active() then return error("Internet connection required")
-	if sin.len != 1 then return error("Invalid parameters")
+	if sin.len != 1 then return error("Invalid parameters", "ping")
 	start=time
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Pinging "+sin[0]+"</color>")
 	ping=shell.ping(sin[0])
@@ -2866,7 +2873,7 @@ cmds.dictssh=function(sin)
 	out.bool=2
 	if shelltype!="shell" then return error("Shell required")
 	if not comp.is_network_active() then return error("Internet connection required")
-	if sin.len > 3 then return error("Invalid parameters")
+	if sin.len > 3 then return error("Invalid parameters", "dictssh")
 	if server.shell then
 		passwds=server.shell.host_computer.File("/root/passwds")
 	else
@@ -2925,7 +2932,7 @@ cmds.dictsudo=function(sin)
 	out={}
 	out.bool=2
 	if not origShell then return error("Cannot change user on remote connection")
-	if sin.len > 1 then return error("Invalid parameters")
+	if sin.len > 1 then return error("Invalid parameters", "dictsudo")
 	if server.shell then
 		passwds=server.shell.host_computer.File("/root/passwds")
 	else
@@ -2979,7 +2986,7 @@ cmds.brutessh=function(sin)
 	out.bool=2
 	if shelltype != "shell" then return error("Shell required")
 	if not comp.is_network_active() then return error("Internet connection required")
-	if sin.len > 3 then return error("Invalid parameters")
+	if sin.len > 3 then return error("Invalid parameters", "brutessh")
 	ip=rhost
 	port=22
 	user="root"
@@ -3045,7 +3052,7 @@ cmds.brutesudo=function(sin)
 	out={}
 	out.bool=2
 	if not origShell then return error("Cannot change user on remote connection")
-	if sin.len > 1 then return error("Invalid parameters")
+	if sin.len > 1 then return error("Invalid parameters", "brutesudo")
 	user="root"
 	if sin.len == 1 then user=sin[0]
 	alpha="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -3103,7 +3110,7 @@ cmds.lan=function(sin)
 	out={}
 	out.bool=2
 	if comp.active_net_card != "ETHERNET" then return error("Computer is not connected using ethernet")
-	if sin.len != 2 then return error("Invalid parameters")
+	if sin.len != 2 then return error("Invalid parameters", "lan")
 	out.out=comp.connect_ethernet("eth0",sin[1],sin[0])
 	return out
 end function
@@ -3147,11 +3154,11 @@ cmds.smtp = function(shell_input)
 			return error("Internet connection required")
 		end if
 	end if
-	if shell_input.len() != 1 then return error("Invalid parameters")
+	if shell_input.len() != 1 then return error("Invalid parameters", "smtp")
 	crypto = include_lib(cpf)
 	ip_address = globals.rhost
 	smtp_port = shell_input[0].val()
-	if smtp_port == 0 then return error("Invalid parameters")
+	if smtp_port == 0 then return error("Invalid parameters", "smtp")
 	users = crypto.smtp_user_list(ip_address, smtp_port)
 	if not users then return error("Could not get user list from smtp")
 	if users isa string then return error(users)
@@ -3172,7 +3179,7 @@ cmds.libcheck = function(shell_input)
 	output.bool = 2
 
 	if not origShell then return error("Can't check library on a remote connection")
-	if shell_input.len() != 1 then return error("Invalid parameters")
+	if shell_input.len() != 1 then return error("Invalid parameters", "libcheck")
 	metaxploit = include_lib(mxf)
 
 	lib_file = shell.host_computer().File(shell_input[0])
