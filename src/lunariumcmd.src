@@ -1257,8 +1257,10 @@ cmds.target=function(sin)
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
     if sin.len > 2 then return error("Invalid parameters", "target")
 	if sin.len == 0 or sin[0] == "all" then
-		for sin[0] in get_router(rhost).used_ports
-			globals.expport=sin[0].to_int
+		router = get_router(rhost)
+		ports = router.used_ports
+		for port in ports
+			globals.expport=port.to_int
 			if typeof(expport) != "number" then return error("Invalid port")
 			if sin.len == 2 then globals.args=sin[1]
 			if server.shell then
