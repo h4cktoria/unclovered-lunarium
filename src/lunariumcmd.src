@@ -1255,40 +1255,79 @@ cmds.target=function(sin)
 	end if
     globals.args=null
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
-    if sin.len == 0 or sin.len > 2 then return error("Invalid parameters", "target")
-    globals.expport=sin[0].to_int
-    if typeof(expport) != "number" then return error("Invalid port")
-    if sin.len == 2 then globals.args=sin[1]
-	if server.shell then
-		server.shell.launch("/root/rcon")
-		lmx=COB.server.mx
+    if sin.len > 2 then return error("Invalid parameters", "target")
+	if sin.len == 0 or sin[0] == "all" then
+		for sin[0] in get_router(rhost).used_ports
+			globals.expport=sin[0].to_int
+			if typeof(expport) != "number" then return error("Invalid port")
+			if sin.len == 2 then globals.args=sin[1]
+			if server.shell then
+				server.shell.launch("/root/rcon")
+				lmx=COB.server.mx
+			else
+				lmx=mx
+			end if
+			globals.lmx=lmx
+			ns=mx.net_use(rhost,expport)
+			if not ns then return error("Cannot establish net session")
+			globals.ml=ns.dump_lib
+			if server.shell then
+				getExploits
+				inDB=0
+				for dblib in exploits
+					if ml.lib_name == dblib.name and ml.version == dblib.ver then inDB=1
+				end for
+			end if
+			if dbfile then
+				getExploits
+				globals.lib=null
+				for dblib in exploits
+					if ml.lib_name == dblib.name and ml.version == dblib.ver then
+						globals.lib=dblib
+						break
+					end if
+				end for
+				saveScan()
+			else
+				Scan()
+			end if
+		end for
 	else
-		lmx=mx
+		globals.expport=sin[0].to_int
+		if typeof(expport) != "number" then return error("Invalid port")
+		if sin.len == 2 then globals.args=sin[1]
+		if server.shell then
+			server.shell.launch("/root/rcon")
+			lmx=COB.server.mx
+		else
+			lmx=mx
+		end if
+		globals.lmx=lmx
+		ns=mx.net_use(rhost,expport)
+		if not ns then return error("Cannot establish net session")
+		globals.ml=ns.dump_lib
+		if server.shell then
+			getExploits
+			inDB=0
+			for dblib in exploits
+				if ml.lib_name == dblib.name and ml.version == dblib.ver then inDB=1
+			end for
+		end if
+		if dbfile then
+			getExploits
+			globals.lib=null
+			for dblib in exploits
+				if ml.lib_name == dblib.name and ml.version == dblib.ver then
+					globals.lib=dblib
+					break
+				end if
+			end for
+			saveScan()
+		else
+			Scan()
+		end if
 	end if
-	globals.lmx=lmx
-    ns=mx.net_use(rhost,expport)
-    if not ns then return error("Cannot establish net session")
-    globals.ml=ns.dump_lib
-    if server.shell then
-		getExploits
-        inDB=0
-        for dblib in exploits
-            if ml.lib_name == dblib.name and ml.version == dblib.ver then inDB=1
-        end for
-	end if
-    if dbfile then
-        getExploits
-        globals.lib=null
-        for dblib in exploits
-            if ml.lib_name == dblib.name and ml.version == dblib.ver then
-                globals.lib=dblib
-                break
-            end if
-        end for
-        saveScan()
-    else
-        Scan()
-    end if
+
 	exps={"root": [], "user": [], "guest": []}
 	for ex in results
 		if ex.user == "root" then
