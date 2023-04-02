@@ -69,7 +69,17 @@ mx=include_lib(mxf)
 
 if bcf then bc=include_lib(bcf) else bc=null
 print("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Lunarium libraries loaded</color>")
-
+print("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Loading alias</color>")
+alias = {}
+af = get_shell.host_computer.File(current_path+"/LuAliases.conf")
+if not af then get_shell.host_computer.touch(current_path, "LuAliases.conf")
+af = get_shell.host_computer.File(current_path+"/LuAliases.conf")
+for a in af.get_content.split(char(10))
+	a = a.split(":")
+	if a.len != 2 then continue
+	alias[a[0]] = a[1]
+end for
+print("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Alias loaded</color>")
 
 // logRs="fstab"
 logRs = "clover_backdoor_debug"
@@ -742,6 +752,10 @@ LunariumOS=function(input=null)
 			// if prompt[0] == "clr" or prompt[0] == "cls" then prompt[0]="clear"
 			if prompt[0] == "!!" then prompt=previous
 			previous=prompt
+			for al in alias
+				al["key"]="$"+al["key"]
+				prompt.replace(al["key"],al["value"])
+			end for
 			args=prompt[1:]
 			comm=prompt[0]
 			if cmds.hasIndex(comm) then
