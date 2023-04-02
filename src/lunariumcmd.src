@@ -10,6 +10,8 @@ helplist={}
 helplist.defaults="-=Defaults=-"
 
 helplist.help={"params": "[command]", "usage": "List all commands, or list command usage!"}
+helplist.addal={"params": "[key][value]", "usage": "Add alias"}
+helplist.delal={"params": "[key]", "usage": "Delete alias"}
 // helplist.fs={"params": "[FoxScriptCode]", "usage": "Invoke the FoxScript code terminal"}
 helplist.exit={"params": "N/A", "usage": "Go back a shell, or exit Lunarium"}
 helplist.clear={"params": "N/A", "usage": "Clears the screen"}
@@ -702,6 +704,28 @@ cmds.chmod=function(sin)
 		file.chmod(perm+perms[1],rec)
 	end for
 	print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>chmod successful</color>")
+	return out
+end function
+
+cmds.addal=function(sin)
+	out={}
+	out.bool=2
+	if sin.len != 2 then return error("Invalid parameters", "addal")
+	if alias.hasIndex(sin[0]) then return error("This alias have already registered")
+	globals.alias[sin[0]]=sin[1]
+	af.set_content(af.get_content+char(10)+sin[0]+":"+sin[1])
+	return out
+end function
+
+cmds.delal=function(sin)
+	out={}
+	out.bool=2
+	if sin.len != 1 then return error("Invalid parameters", "delal")
+	if not alias.hasIndex(sin[0]) then return error("Alias hasn't found")
+	con=af.get_content
+	al=sin[0]+":"+alias[sin[0]]
+	newcont=con[:con.indexOf(char(10)+alias)]+con[con.indexOf(al)+al.len:]
+	alias.remove(sin[0])
 	return out
 end function
 
@@ -3262,7 +3286,7 @@ cmds.about = function(shell_input)
 	
 	print("<color=#CCCCFF>[Lunarium]</color>")
 	print("<color=#CCCCFF>Night Lunar made by </color><color=#E6E6FA>Clover (https://github.com/cloverrfoxx)</color>")
-	print("<color=#CCCCFF>Unclovered by </color><color=#E6E6FA>Hacktoria (https://github.com/h4cktoria)</color>")
+	print("<color=#CCCCFF>Unclovered by </color><color=#E6E6FA>Hacktoria (https://github.com/h4cktoria) and David (https://github.com/AsfhtgkDavid)</color>")
 	
 	license_message = "
 This program comes with ABSOLUTELY NO WARRANTY;
@@ -3346,3 +3370,9 @@ cmds.dl = @cmds.get
 cmds.download = @cmds.get
 
 cmds.rnd = @cmds.random
+
+cmds.addvar = @cmds.addal
+cmds.addalias = @cmds.addal
+
+cmds.delvar = @cmds.delal
+cmds.delalias = @cmds.delal
