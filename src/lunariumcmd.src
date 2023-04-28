@@ -115,7 +115,7 @@ helplist.clrmail={"params": "N/A", "usage": "Clears emails"}
 helplist.readmail={"params": "N/A", "usage": "Read emails"}
 
 //server control
-// helplist.revoke={"params": "N/A", "usage": "Revokes fingerprint access token"}
+// helplist.revoke={"params": "N/A", "usage": "Revokes fingerprint access token"} // entirely deprecated feature. Previously used in the passwords-based 2FA era of Lunar. Now replaced with the automated email sign in. -Clover
 
 //destructive controls
 helplist.destructive="-=Destructive=-"
@@ -713,6 +713,7 @@ cmds.addal=function(sin)
 	if sin.len != 2 then return error("Invalid parameters", "addal")
 	if alias.hasIndex(sin[0]) then return error("This alias have already registered")
 	globals.alias[sin[0]]=sin[1]
+	if not af or not af.has_permission("w") then return out
 	af.set_content(af.get_content+char(10)+sin[0]+":"+sin[1])
 	return out
 end function
@@ -722,9 +723,11 @@ cmds.delal=function(sin)
 	out.bool=2
 	if sin.len != 1 then return error("Invalid parameters", "delal")
 	if not alias.hasIndex(sin[0]) then return error("Alias hasn't found")
+	if not af or not af.has_permission("w") then return error("No permissions to LuAliases.conf")
 	con=af.get_content
 	al=sin[0]+":"+alias[sin[0]]
 	newcont=con[:con.indexOf(char(10)+alias)]+con[con.indexOf(al)+al.len:]
+	af.set_content(newcont.join(char(10)))
 	alias.remove(sin[0])
 	return out
 end function
@@ -1479,13 +1482,15 @@ cmds.escalate=function(sin)
     out.bool=2
     globals.args=null
 
-	if shelltype != "file" then
-		if not comp.is_network_active() then
-			return error("Internet connection required")
-		end if
-	end if
+	//if shelltype != "file" then // this is escalation, i don't entirely believe it requires internet connection.
+	//	if not comp.is_network_active() then
+	//		return error("Internet connection required")
+	//	end if
+	//end if
 
 	// as escalate does not works on a remote connection - why allowing user to use it on it?
+	// because i decided it would be nice to still be able to escalate/hack on the local machine while connected to something else remotely. it was actually rather useful! maybe instead a warning that its escalating the local machine would've been better though -Clover
+	// using your same logic however target also does not work on a remote connection. technically -Clover
 	if not origShell then return error("Can't use escalate on a remote connection")
 
     rinfo=[["<color=#CCCCFF>[Num]","[Object]","[Perms]","[Lan]","[PubIP]","[Port]</color>"].join(" ")]
@@ -1567,11 +1572,11 @@ end function
 cmds.use=function(sin)
     out={}
     out.bool=2
-	if shelltype != "file" then
-		if not comp.is_network_active() then
-			return error("Internet connection required")
-		end if
-	end if
+	//if shelltype != "file" then // pretty sure this check is entirely useless here. shouldn't matter if you're internet connected or not if you already have the resulting objects
+	//	if not comp.is_network_active() then
+	//		return error("Internet connection required")
+	//	end if
+	//end if
     if not results.len then return error("No exploits found")
     if sin.len != 1 then return error("Invalid parameters", "use")
     num=sin[0].to_int
@@ -1629,12 +1634,13 @@ cmds.rshell=function(sin)
     out={}
     out.bool=2
 	
-	if shelltype != "file" then
-		if not comp.is_network_active() then
-			return error("Internet connection required")
-		end if
-	end if
+	//if shelltype != "file" then // And why this check for the commands that already check "origShell"? The origShell check will automatically filter these out and you can do a simple one-line check for internet directly afterwards
+	//	if not comp.is_network_active() then
+	//		return error("Internet connection required")
+	//	end if
+	//end if
     if not origShell then return error("Cannot run an rshell on a remote connection")
+	if not comp.is_network_active() then return error("Internet connection required")
     if sin.len() != 3 then return error("Invalid parameters", "rshell")
     rsport=1222
     if sin.len >= 1 then rip=sin[0]
@@ -1714,12 +1720,13 @@ end function
 cmds.rsi=function(sin)
 	out={}
 	out.bool=2
-	if shelltype != "file" then
-		if not comp.is_network_active() then
-			return error("Internet connection required")
-		end if
-	end if
+	//if shelltype != "file" then
+	//	if not comp.is_network_active() then
+	//		return error("Internet connection required")
+	//	end if
+	//end if
 	if not origShell then return error("Cannot receive rshell connections on a remote connection")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if not include_lib("/lib/librshell.so") then return error("No rshell server installed")
 	rsinfo="num pubip locip user\n"
 	rshells=[]
@@ -1779,12 +1786,13 @@ end function
 cmds.sniffer=function(sin)
 	out={}
 	out.bool=2
-	if shelltype != "file" then
-		if not comp.is_network_active() then
-			return error("Internet connection required")
-		end if
-	end if
+	//if shelltype != "file" then
+	//	if not comp.is_network_active() then
+	//		return error("Internet connection required")
+	//	end if
+	//end if
 	if not origShell then return error("Cannot sniff connections on a remote connection")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if sin.len > 1 then return error("Invalid parameters", "sniffer")
 	save=0
 	if sin.len == 1 then save=1
@@ -2234,7 +2242,7 @@ cmds.bios=function(sin)
     out={}
     out.bool=2
 	
-	if not comp.is_network_active() then return error("Internet connection required")
+	if not comp.is_network_active() then return error("Internet connection required") // why entirely block this command instead of the networking parts?
     print("<color=#CCCCFF>-=-= <b>[Lunarium OS Bios Scan]</b> =-=-</color>")
     print("<color=#CCCCFF>-= Performing full system check... =-</color>")
     print("<align=right><color=#CCCCFF><size=150%>[LunariumOS]</size></color></align>")
@@ -2774,15 +2782,16 @@ cmds["while"]=function(sin)
 	return out
 end function
 
-cmds.apt=function(sin)
+cmds.apt=function(sin) // thanks for being less lazy than me :)
 	out={}
 	out.bool=2
-	if shelltype != "file" then
-		if not comp.is_network_active() then
-			return error("Internet connection required")
-		end if
-	end if
+	//if shelltype != "file" then
+	//	if not comp.is_network_active() then
+	//		return error("Internet connection required")
+	//	end if
+	//end if
 	if not origShell then return error("Cannot apt on a remote connection")
+	if not comp.is_network_active() then return error("Internet connection required")
 	if not apt then return error("aptclient.so required")
 	if sin.len == 0 or sin.len > 2 then return error("Invalid parameters", "apt")
 	if not comp.File("/etc/apt") then
@@ -2997,11 +3006,11 @@ end function
 cmds.shells=function(sin)
     out={}
     out.bool=2
-	if shelltype != "file" then
-		if not comp.is_network_active() then
-			return error("Internet connection required")
-		end if
-	end if
+	//if shelltype != "file" then // also not entirely required here. you already have the objects so you can still use them. (i'm pretty sure)
+	//	if not comp.is_network_active() then
+	//		return error("Internet connection required")
+	//	end if
+	//end if
 	if not globals.sessions[session].shells.len then return out
     for i in range(0,globals.sessions[session].shells.len-1)
         print("\n<color=#CCCCFF>["+i+"]</color>")
@@ -3285,7 +3294,8 @@ cmds.about = function(shell_input)
 	output.bool = 2
 	
 	print("<color=#CCCCFF>[Lunarium]</color>")
-	print("<color=#CCCCFF>Night Lunar made by </color><color=#E6E6FA>Clover (https://github.com/cloverrfoxx)</color>")
+	// Please note its just "Lunar". the source file was called "nightlunar.src" as it was Lunar modified for a previous nightly build and i did not want to overwrite the main "lunar.src". It is still Lunar. -Clover
+	print("<color=#CCCCFF>Lunar made by </color><color=#E6E6FA>Clover (https://github.com/cloverrfoxx)</color>")
 	print("<color=#CCCCFF>Unclovered by </color><color=#E6E6FA>Hacktoria (https://github.com/h4cktoria) and David (https://github.com/AsfhtgkDavid)</color>")
 	
 	license_message = "
