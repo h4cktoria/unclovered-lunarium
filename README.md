@@ -62,6 +62,6 @@ This software is licensed under GPL v3. See [here](https://github.com/h4cktoria/
 
 - [Kurouzu](https://steamcommunity.com/profiles/76561198135838638) - for creating [Grey Hack](https://store.steampowered.com/app/605230/Grey_Hack/)
 - [Joe Strout](https://github.com/JoeStrout) - for creating [MiniScript](https://github.com/JoeStrout/miniscript)
-- [Clover](https://github.com/cloverrfoxx) - for creating and open sourcing Lunar and [other scripts](https://github.com/cloverrfoxx/greyhack)
+- [Clover](https://github.com/cloverrfoxx) - for creating and open sourcing Lunar(aswell as [other scripts](https://github.com/cloverrfoxx/greyhack)) and contributing to Unclovered version of it
 - [Guest](https://mstdn.social/@fmmaks) and [Ungoogled Chromium](https://github.com/ungoogled-software/ungoogled-chromium) - for giving me the naming idea
 - D A V I D#9433 - for contributing to the code
