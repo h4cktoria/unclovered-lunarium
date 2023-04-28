@@ -2242,7 +2242,7 @@ cmds.bios=function(sin)
     out={}
     out.bool=2
 	
-	if not comp.is_network_active() then return error("Internet connection required") // why entirely block this command instead of the networking parts?
+	//if not comp.is_network_active() then return error("Internet connection required") // why entirely block this command instead of the networking parts?
     print("<color=#CCCCFF>-=-= <b>[Lunarium OS Bios Scan]</b> =-=-</color>")
     print("<color=#CCCCFF>-= Performing full system check... =-</color>")
     print("<align=right><color=#CCCCFF><size=150%>[LunariumOS]</size></color></align>")
@@ -2313,7 +2313,7 @@ cmds.bios=function(sin)
     print("<color=#CCCCFF>Folders count </color><color=#E6E6FA>["+flds+"]</color><color=#CCCCFF> - Files count </color><color=#E6E6FA>["+fls+"]</color>\n")
 
     //network
-    if shelltype != "file" and not anon then
+    if shelltype != "file" and not anon and comp.is_network_active() then // moved network check to here (this should be the only part that uses internet)
         essid=get_router(comp.public_ip).essid_name
         bssid=get_router(comp.public_ip).bssid_name
 		wifis=null
@@ -2357,7 +2357,7 @@ cmds.bios=function(sin)
         f.owner=0
         if currFile.is_folder then newFiles=currFile.get_folders+currFile.get_files+newFiles
         if currFile.permissions[-3:].indexOf("w") != null then f.perms=1
-        if currFile.owner != "root" then fowner=1
+        if currFile.owner != "root" then f.owner=1 // just noticed i forgot the . between "f" and "owner"
         if f.owner or f.perms then
             num=num+1
             insecuredFiles.push(f)
