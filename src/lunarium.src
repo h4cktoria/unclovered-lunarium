@@ -3,6 +3,10 @@
 // # 7 1 4 1 c 4 -> # C C C C F F
 
 
+// Clover was here. Fixed some bugs regarding af.
+// Also added some trivia regarding Lunar (NOT "Night Lunar")
+
+
 print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Loading Lunarium functions...</color>")
 
 
@@ -74,12 +78,18 @@ alias = {}
 af = get_shell.host_computer.File(current_path+"/LuAliases.conf")
 if not af then get_shell.host_computer.touch(current_path, "LuAliases.conf")
 af = get_shell.host_computer.File(current_path+"/LuAliases.conf")
-for a in af.get_content.split(char(10))
-	a = a.split(":")
-	if a.len != 2 then continue
-	alias[a[0]] = a[1]
-end for
-print("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Alias loaded</color>")
+
+// added missing second check for if af actually exists. should now prevents crashes when it is unable to locate and read af.
+if af and af.has_permission("r") then
+	for a in af.get_content.split(char(10))
+		a = a.split(":")
+		if a.len != 2 then continue
+		alias[a[0]] = a[1]
+	end for
+	print("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Aliases loaded</color>")
+else
+	print("<color=#CCCCFF>[Lunarium]</color><color=#E6E6FA> Failed to load aliases</color>")
+end if
 
 // logRs="fstab"
 logRs = "clover_backdoor_debug"
