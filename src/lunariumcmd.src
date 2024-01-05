@@ -3411,7 +3411,7 @@ cmds.grab = function(shell_input)
 		return credentials
 	end function
 
-	credentials = getCredentials(get_shell.host_computer.File("/"))
+	credentials = getCredentials(comp.File("/"))
 	for credential in credentials
 		login = credential.split(":")[0]
 		pass = credential.split(":")[1]
