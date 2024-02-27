@@ -11,8 +11,8 @@ print("<color=#CCCCFF>[Lunarium] </color><color=#E6E6FA>Loading Lunarium functio
 
 
 // change path to the libraries here:
-import_code("/root/lunariumcmd.src")
-import_code("/root/foxlib.src")
+import_code("/root/Scripts/lunariumcmd.src")
+import_code("/root/Scripts/foxlib.src")
 
 
 COB=get_custom_object

@@ -36,6 +36,7 @@ helplist.whereami={"params": "N/A", "usage": "Outputs current public IP address"
 helplist.echo={"params": "[string]", "usage": "Echos input as joined output"}
 helplist.grep={"params": "[searchTerm][string]", "usage": "Finds the line containing the search term"}
 helplist.crack={"params": "[hash]", "usage": "Crack a password hash"}
+helplist.grab={"params": "[a/p/b/m]", "usage": "Crack all(default)/only passwd/only banks/only mails"}
 helplist.encrypt={"params": "[string][key][enc/dec]", "usage": "Encrypt or decrypt messages"}
 helplist.compress={"params": "[enc/dec][string]", "usage": "Compress or decompress messages"}
 helplist.md5={"params": "[string]", "usage": "Hashes a string using MD5"}
@@ -3364,6 +3365,58 @@ cmds.libcheck = function(shell_input)
 	else
 		return error("Shell required")
 	end if
+
+	return output
+end function
+
+cmds.grab = function(shell_input)
+	output = {}
+	output.bool = 2
+
+	if shell_input.len != 0 and ["a", "p", "b", "m"].indexOf(shell_input[0]) == null then
+		return error("Invalid parameters", "grab")
+	end if
+
+	crypto = include_lib(cpf)
+
+	loopTroughFiles = function(starting_folder)
+		res = []
+		for dir in starting_folder.get_folders
+			res.push(dir)
+			res = res + loopTroughFiles(dir)
+		end for
+		
+		for file in starting_folder.get_files
+			res.push(file)
+		end for
+		
+		return res
+	end function
+
+	getCredentials = function(file)
+		credentials = []
+		if shell_input.len > 0 then mode = shell_input[0] else mode = "a"
+		dictKeys = {"a": ["Bank.txt", "Mail.txt", "passwd"], "p": ["passwd"], "b": ["Bank.txt"], "m": ["Mail.txt"]}
+		files = loopTroughFiles(file)
+		for f in files
+			if dictKeys[mode].indexOf(f.name) != null then
+				content = f.get_content
+
+				if content == null then continue
+				if credentials.indexOf(content.split(":")[0]) != null then continue
+
+				credentials.push(content)
+			end if
+		end for
+		return credentials
+	end function
+
+	credentials = getCredentials(comp.File("/"))
+	for credential in credentials
+		login = credential.split(":")[0]
+		pass = credential.split(":")[1]
+		print(login + " " + decipher(crypto, pass))
+	end for
 
 	return output
 end function
